@@ -19,23 +19,12 @@
 
 #include "gpiotools.h"
 
-/*
-int
-get_chip_info(int gpio_fd, struct gpiochip_info *chip_info)
-{
-	if (ioctl(gpio_fd, GPIO_GET_CHIPINFO_IOCTL, chip_info) == -1)
-		return 0;
-	else
-		return 1;
-}
+/* If I understand this correctly, placing these here with the 'extern' keyword
+ * will put non-inlined object code into the library for cases when inline won't
+ * work.
+ * If I'm not understanding this correctly, please let me know!!! - JDS */
+extern int
+get_chip_info(int gpio_fd, struct gpiochip_info *chip_info);
 
-int
-get_line_info(int gpio_fd, unsigned int line, struct gpioline_info *line_info)
-{
-	line_info->line_offset = line;
-	if (ioctl(gpio_fd, GPIO_GET_LINEINFO_IOCTL, line_info) == -1)
-		return 0;
-	else
-		return 1;
-}
-*/
+extern int
+get_line_info(int gpio_fd, unsigned int line, struct gpioline_info *line_info);
