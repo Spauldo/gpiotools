@@ -29,13 +29,27 @@
  * Takes an open filehandle to a gpio device and a pointer to gpiochip_info
  * struct, which it fills in.
  * Returns true if successful, false otherwise. */
-int get_chip_info(int gpio_fd, struct gpiochip_info *chip_info);
+__attribute__((always_inline)) int inline
+get_chip_info(int gpio_fd, struct gpiochip_info *chip_info)
+{
+	if (ioctl(gpio_fd, GPIO_GET_CHIPINFO_IOCTL, chip_info) == -1)
+		return 0;
+	else
+		return 1;
+}
 
 /* Retrieves the line info for a single GPIO line.
  * Takes an open filehandle to a gpio device, the line number we are interested
  * in, and a pointer to a gpioline_info struct which it fills in.
  * Returns true if successful, false otherwise. */
-int get_line_info(int gpio_fd, unsigned int line,
-		  struct gpioline_info *line_info);
+__attribute__((always_inline)) int inline
+get_line_info(int gpio_fd, unsigned int line, struct gpioline_info *line_info)
+{
+	line_info->line_offset = line;
+	if (ioctl(gpio_fd, GPIO_GET_LINEINFO_IOCTL, line_info) == -1)
+		return 0;
+	else
+		return 1;
+}
 
 #endif /* _GPIOTOOLS_H */

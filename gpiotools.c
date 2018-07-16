@@ -19,6 +19,7 @@
 
 #include "gpiotools.h"
 
+/*
 int
 get_chip_info(int gpio_fd, struct gpiochip_info *chip_info)
 {
@@ -37,3 +38,4 @@ get_line_info(int gpio_fd, unsigned int line, struct gpioline_info *line_info)
 	else
 		return 1;
 }
+*/
