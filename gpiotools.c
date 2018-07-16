@@ -28,3 +28,15 @@ get_chip_info(int gpio_fd, struct gpiochip_info *chip_info);
 
 extern int
 get_line_info(int gpio_fd, unsigned int line, struct gpioline_info *line_info);
+
+extern int
+get_line_handle(int gpio_fd, struct gpiohandle_request *req);
+
+extern int
+get_line_data(int line_fd, struct gpiohandle_data *data);
+
+extern int
+set_line_data(int line_fd, struct gpiohandle_data *data);
+
+extern int
+get_gpioevent_handle(int gpio_fd, struct gpioevent_request *req);

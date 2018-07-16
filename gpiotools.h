@@ -26,7 +26,7 @@
 #include <sys/ioctl.h>
 
 /* Retrieves the chip information for a GPIO chip.
- * Takes an open filehandle to a gpio device and a pointer to gpiochip_info
+ * Takes an open file descriptor to a gpio device and a pointer to gpiochip_info
  * struct, which it fills in.
  * Returns true if successful, false otherwise. */
 __attribute__((always_inline)) int inline
@@ -39,8 +39,8 @@ get_chip_info(int gpio_fd, struct gpiochip_info *chip_info)
 }
 
 /* Retrieves the line info for a single GPIO line.
- * Takes an open filehandle to a gpio device, the line number we are interested
- * in, and a pointer to a gpioline_info struct which it fills in.
+ * Takes an open file descriptor to a gpio device, the line number we are
+ * interested in, and a pointer to a gpioline_info struct which it fills in.
  * Returns true if successful, false otherwise. */
 __attribute__((always_inline)) int inline
 get_line_info(int gpio_fd, unsigned int line, struct gpioline_info *line_info)
@@ -51,5 +51,64 @@ get_line_info(int gpio_fd, unsigned int line, struct gpioline_info *line_info)
 	else
 		return 1;
 }
+
+/* Retrieves a file descriptor for a set of GPIO lines.
+ * Takes an open file descriptor to a gpio device and a pointer to a populated
+ * gpiohandle_request struct.
+ * Returns true if successful, false otherwise. */
+__attribute__((always_inline)) int inline
+get_line_handle(int gpio_fd, struct gpiohandle_request *req)
+{
+	/* I thought about having this function set up the req struct, but
+	 * it's actually easier and faster to just do it on the calling
+	 * side.  So we just do the ioctl() here. */
+	if (ioctl(gpio_fd, GPIO_GET_LINEHANDLE_IOCTL, req) == -1)
+		return 0;
+	else if (req->fd <= 0)
+		/* We got a bad file descriptor. */
+		return 0;
+	else
+		return 1;
+}
+
+/* Reads the data for a set of lines.
+ * Takes an open line descriptor and a pointer to a gpiohandle_data struct
+ * which it fills in with the retrieved data.
+ * Returns true if successful, false otherwise. */
+__attribute__((always_inline)) int inline
+get_line_data(int line_fd, struct gpiohandle_data *data)
+{
+	if (ioctl(line_fd, GPIOHANDLE_GET_LINE_VALUES_IOCTL, data) == -1)
+		return 0;
+	else
+		return 1;
+}
+
+/* Writes the data to a set of lines.
+ * Takes an open line descriptor and a pointer to a gpiohandle_data struct
+ * which must contain the data to write.
+ * Returns true if successful, false otherwise. */
+__attribute__((always_inline)) int inline
+set_line_data(int line_fd, struct gpiohandle_data *data)
+{
+	if (ioctl(line_fd, GPIOHANDLE_SET_LINE_VALUES_IOCTL, data) == -1)
+		return 0;
+	else
+		return 1;
+}
+
+/* Gets the file descriptor to a stream of event data for a line.
+ * Takes an open gpio descriptor and a pointer to a prefilled gpioeven_request
+ * struct, where it will place the file descriptor.
+ * Returns true on success and false otherwise. */
+__attribute__((always_inline)) int inline
+get_gpioevent_handle(int gpio_fd, struct gpioevent_request *req)
+{
+	if (ioctl(gpio_fd, GPIO_GET_LINEEVENT_IOCTL, req) == -1)
+		return 0;
+	else
+		return 1;
+}
+
 
 #endif /* _GPIOTOOLS_H */
