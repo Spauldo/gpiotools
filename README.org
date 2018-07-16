@@ -11,10 +11,18 @@
   This library is a work in progress, and will grow as I need it.
 
 ** Features of libgpiotools
+   
+   So far, libgpiotools provides wrappers for the ioctl() calls in linux/gpio.h.
+   These are all declared inline, so there should be minimal performance cost.
+   
+   In many cases, a struct must be provided with some members filled in.  In most
+   of those cases, this struct must be filled in my the user.
+   
+   The user should examine linux/gpio.h for information on the structs that need
+   to be filled in.
+   
+   Further functionality is planned as needed.
 
-  - Read chip info
-  - Read line info
-    
 ** Utilities
 
 *** gpiolist - get information about system GPIO devices
